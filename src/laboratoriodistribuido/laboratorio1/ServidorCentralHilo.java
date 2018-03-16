@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 
 public class ServidorCentralHilo extends Thread {
 
@@ -16,7 +17,11 @@ public class ServidorCentralHilo extends Thread {
     private DataOutputStream outBuffer;
     private int idSession;
 
-    public ServidorCentralHilo(Socket clientSocket, int idSession) {
+    private HashMap<String, String> cacheClima;
+    private HashMap<String, String> cacheHoroscopo;
+
+    public ServidorCentralHilo(Socket clientSocket, int idSession,
+            HashMap<String, String> cacheC, HashMap<String, String> cacheH) {
         this.clientSocket = clientSocket;
         this.idSession = idSession;
         //inicializa los buffers para comunicarse con el cliente
@@ -26,6 +31,8 @@ public class ServidorCentralHilo extends Thread {
         } catch (IOException ex) {
             System.err.println("Servidor> " + ex.getMessage());
         }
+        cacheClima = cacheC;
+        cacheHoroscopo = cacheH;
     }
 
     public void desconnectar() {
@@ -51,11 +58,27 @@ public class ServidorCentralHilo extends Thread {
 
                 //chequea si es un dato valido para consultar el clima o el horoscopo
                 if (isValidDate(query)) {
-                    System.out.println("Servidor> Consultando a servidor de clima...");
-                    answer = askServer(query, CLIMA_PORT);
+                    //busca la consulta en la cache.
+                    answer = cacheClima.get(query);
+                    //si no tiene dato entonces se lo pregunta al servidor
+                    if (answer == null) {
+                        System.out.println("Servidor> Consultando a servidor de clima...");
+                        answer = askServer(query, CLIMA_PORT);
+                        cacheClima.put(query, answer);
+                    } else {
+                        System.out.println("cache hit.");
+                    }
                 } else if (isValidSign(query)) {
-                    System.out.println("Servidor> Consultando a servidor de horoscopo...");
-                    answer = askServer(query, HOROSCOPO_PORT);
+                    //busca la consulta en la cache.
+                    answer = cacheHoroscopo.get(query);
+                    //si no tiene dato entonces se lo pregunta al servidor
+                    if (answer == null) {
+                        System.out.println("Servidor> Consultando a servidor de horoscopo...");
+                        answer = askServer(query, HOROSCOPO_PORT);
+                        cacheHoroscopo.put(query, answer);
+                    } else {
+                        System.out.println("cache hit.");
+                    }
                 } else {
                     answer = "Consulta no valida.";
                 }
