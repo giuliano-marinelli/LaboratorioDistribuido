@@ -7,13 +7,7 @@ import java.net.Socket;
 
 public class Cliente {
 	
-    /**
-    * Puerto
-    * */
     private final static int PORT = 5000;
-    /**
-    * Host
-    * */
     private final static String SERVER = "localhost";
     
     public static void main(String[] args) {

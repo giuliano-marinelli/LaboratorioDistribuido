@@ -7,10 +7,10 @@ public class ServidorHilo extends Thread {
     private Socket socket;
     private DataOutputStream dos;
     private DataInputStream dis;
-    private int idSessio;
+    private int idSession;
     public ServidorHilo(Socket socket, int id) {
         this.socket = socket;
-        this.idSessio = id;
+        this.idSession = id;
         try {
             dos = new DataOutputStream(socket.getOutputStream());
             dis = new DataInputStream(socket.getInputStream());
@@ -31,7 +31,7 @@ public class ServidorHilo extends Thread {
         try {
             accion = dis.readUTF();
             if(accion.equals("hola")){
-                System.out.println("El cliente con idSesion "+this.idSessio+" saluda");
+                System.out.println("El cliente con idSesion "+this.idSession+" saluda");
                 dos.writeUTF("adios");
             }
         } catch (IOException ex) {

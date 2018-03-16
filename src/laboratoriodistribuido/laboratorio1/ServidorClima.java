@@ -1,0 +1,33 @@
+package laboratoriodistribuido.laboratorio1;
+
+import java.io.*;
+import java.net.*;
+
+public class ServidorClima {
+
+    private final static int PORT = 10002;
+
+    public static void main(String args[]) throws IOException {
+        ServerSocket serverSocket;
+        System.out.print("Servidor Clima> Iniciando... ");
+        try {
+            //crea el socket del servidor
+            serverSocket = new ServerSocket(PORT);
+            System.out.println("\t[OK]");
+            System.out.println("Servidor Clima> Esperando conexiones...");
+            int idSession = 0;
+            while (true) {
+                Socket clientSocket;
+                //bloquea hasta que entra una conexion de cliente (se encolan)
+                clientSocket = serverSocket.accept();
+                System.out.println("Servidor Clima> Nueva conexión entrante: " + clientSocket);
+                //lanza un hilo para atender al cliente
+                ((ServidorClimaHilo) new ServidorClimaHilo(clientSocket, idSession)).start();
+                idSession++;
+            }
+        } catch (IOException ex) {
+            System.err.println("Servidor Clima> " + ex.getMessage());
+        }
+    }
+
+}

@@ -7,22 +7,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
-/**
- * @see http://www.jc-mouse.net/
- * @author mouse
- */
+
 public class Servidor {
  
-    /**
-     * Puerto 
-     */
     private final static int PORT = 5000;
     
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
-        
         try {
             //Socket de servidor para esperar peticiones de la red
             ServerSocket serverSocket = new ServerSocket(PORT);

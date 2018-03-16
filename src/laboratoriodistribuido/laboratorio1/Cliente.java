@@ -5,53 +5,47 @@ import java.net.*;
 
 public class Cliente {
 
+    private final static int CENTRAL_PORT = 10000;
+    private final static String SERVER = "localhost";
+
     public static void main(String[] args) throws IOException {
-        //direccion del servidor a conectar
-        String serverAddress = "localhost";
-
-        //creo el socket del cliente
-        Socket clientSocket = null;
         try {
-            clientSocket = new Socket(serverAddress, 20000);
-        } catch (UnknownHostException e) {
-            System.err.println("No se encuentra el servidor.");
-            System.exit(1);
-        } catch (IOException e) {
-            System.err.println("No se puede conectar a " + serverAddress + ".");
-            System.exit(1);
+            System.out.print("Cliente> Iniciando...");
+            //crea el socket para comunicar con el servidor
+            Socket querySocket = new Socket(SERVER, CENTRAL_PORT);
+
+            //inicializa los buffers para comunicarse con el servidor
+            DataInputStream inBuffer;
+            DataOutputStream outBuffer;
+            outBuffer = new DataOutputStream(querySocket.getOutputStream());
+            inBuffer = new DataInputStream(querySocket.getInputStream());
+
+            //inicializa el buffer para leer por consola           
+            BufferedReader inConsole = new BufferedReader(new InputStreamReader(System.in));
+
+            System.out.println("\t[OK]");
+
+            String query = "", answer = "";
+
+            while (!query.equals("exit")) {
+                System.out.print("Cliente> Escriba consulta: ");
+
+                //captura consulta escrita por consola
+                query = inConsole.readLine();
+
+                //envia peticion al servidor
+                outBuffer.writeUTF(query);
+
+                //recibe respuesta del servidor
+                answer = inBuffer.readUTF();
+
+                System.out.println("Servidor> Respuesta: " + answer);
+            }
+
+            //cierra el socket con el servidor
+            querySocket.close();
+        } catch (IOException ex) {
+            System.err.println("Cliente> " + ex.getMessage());
         }
-        System.out.println("Cliente se conecto con " + serverAddress + " exitosamente.");
-
-        //crea un buffer de escritura o de salida (out): para enviar al servidor
-        PrintWriter out = new PrintWriter(
-                clientSocket.getOutputStream(), true);
-
-        //crea un buffer de lectura o de entrada (in): para recibir del servidor
-        BufferedReader in = new BufferedReader(new InputStreamReader(
-                clientSocket.getInputStream()));
-
-        //crea un buffer para leer la entrada por consola
-        BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
-
-        //variable para guardar lo escritor por consola
-        String userInput = "";
-
-        while (!userInput.equals("adios")) {
-            System.out.print("Escriba un mensaje: ");
-            //readLine: bloquea hasta que recibe un mensaje por consola
-            userInput = stdIn.readLine();
-            //envia el mensaje al servidor
-            out.println(userInput);
-            //readLine: bloquea hasta que recibe una respuesta del servidor
-            System.out.println(in.readLine());
-        }
-
-        //cierra los buffer de comunicacion con el servidor y de entrada por consola
-        out.close();
-        in.close();
-        stdIn.close();
-        
-        //cierra el socket del cliente
-        clientSocket.close();
     }
 }
