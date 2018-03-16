@@ -27,7 +27,7 @@ public class Cliente {
 
             String query = "", answer = "";
 
-            while (!query.equals("exit")) {
+            while (!query.equals("salir")) {
                 System.out.print("Cliente> Escriba consulta: ");
 
                 //captura consulta escrita por consola

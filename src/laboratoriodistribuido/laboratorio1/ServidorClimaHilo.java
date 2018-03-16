@@ -2,6 +2,7 @@ package laboratoriodistribuido.laboratorio1;
 
 import java.io.*;
 import java.net.*;
+import java.util.Random;
 
 public class ServidorClimaHilo extends Thread {
 
@@ -45,7 +46,7 @@ public class ServidorClimaHilo extends Thread {
 
             answer = giveWeather(query);
 
-            System.out.println("Servidor Clima> Respuesta: " + answer);
+            System.out.println("Servidor Clima> Respuesta Cliente[" + idSession + "]: " + answer);
 
             //envia la respuesta segun lo consultado
             outBuffer.writeUTF(answer);
@@ -58,7 +59,7 @@ public class ServidorClimaHilo extends Thread {
     }
 
     public String giveWeather(String date) {
-        switch (date) {
+        /*switch (date) {
             case "03/05/2018":
                 return "Soleado";
             case "04/05/2018":
@@ -69,7 +70,15 @@ public class ServidorClimaHilo extends Thread {
                 return "Nublado";
             default:
                 return "sin registros de ese dia";
-        }
+        }*/
+        
+        String[] weathers = {"Soleado", "Lluvioso", "Ventoso", "Nublado"};
+        String[] dmy = date.split("/");
+        int seed = Integer.parseInt(dmy[0])
+                + Integer.parseInt(dmy[1])
+                + Integer.parseInt(dmy[2]) / 1000;
+        Random random = new Random(seed);
+        return weathers[random.nextInt(3)];
     }
 
 }

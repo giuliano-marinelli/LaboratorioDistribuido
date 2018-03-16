@@ -46,7 +46,7 @@ public class ServidorHoroscopoHilo extends Thread {
 
             answer = giveHoroscope(query);
 
-            System.out.println("Servidor Horoscopo> Respuesta: " + answer);
+            System.out.println("Servidor Horoscopo> Respuesta Cliente[" + idSession + "]: " + answer);
 
             //envia la respuesta segun lo consultado
             outBuffer.writeUTF(answer);

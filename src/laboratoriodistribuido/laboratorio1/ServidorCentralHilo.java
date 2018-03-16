@@ -17,13 +17,15 @@ public class ServidorCentralHilo extends Thread {
     private DataOutputStream outBuffer;
     private int idSession;
 
-    private HashMap<String, String> cacheClima;
-    private HashMap<String, String> cacheHoroscopo;
+    private HashMap<String, String> cacheWeather;
+    private HashMap<String, String> cacheHoroscope;
 
     public ServidorCentralHilo(Socket clientSocket, int idSession,
-            HashMap<String, String> cacheC, HashMap<String, String> cacheH) {
+            HashMap<String, String> cacheWeather, HashMap<String, String> cacheHoroscope) {
         this.clientSocket = clientSocket;
         this.idSession = idSession;
+        this.cacheWeather = cacheWeather;
+        this.cacheHoroscope = cacheHoroscope;
         //inicializa los buffers para comunicarse con el cliente
         try {
             inBuffer = new DataInputStream(clientSocket.getInputStream());
@@ -31,8 +33,6 @@ public class ServidorCentralHilo extends Thread {
         } catch (IOException ex) {
             System.err.println("Servidor> " + ex.getMessage());
         }
-        cacheClima = cacheC;
-        cacheHoroscopo = cacheH;
     }
 
     public void desconnectar() {
@@ -50,7 +50,7 @@ public class ServidorCentralHilo extends Thread {
         try {
             String query = "";
             String answer = "";
-            while (!query.equals("exit")) {
+            while (!query.equals("salir")) {
                 //bloquea hasta recibir una consulta
                 query = inBuffer.readUTF();
 
@@ -59,31 +59,41 @@ public class ServidorCentralHilo extends Thread {
                 //chequea si es un dato valido para consultar el clima o el horoscopo
                 if (isValidDate(query)) {
                     //busca la consulta en la cache.
-                    answer = cacheClima.get(query);
+                    answer = cacheWeather.get(query);
                     //si no tiene dato entonces se lo pregunta al servidor
                     if (answer == null) {
                         System.out.println("Servidor> Consultando a servidor de clima...");
                         answer = askServer(query, CLIMA_PORT);
-                        cacheClima.put(query, answer);
+                        if (answer.equals("ERROR")) {
+                            answer = "El servidor de clima no esta disponible, consulte mas tarde.";
+                        } else {
+                            cacheWeather.put(query, answer);
+                        }
                     } else {
-                        System.out.println("cache hit.");
+                        System.out.println("Servidor> Cache hit.");
                     }
                 } else if (isValidSign(query)) {
                     //busca la consulta en la cache.
-                    answer = cacheHoroscopo.get(query);
+                    answer = cacheHoroscope.get(query);
                     //si no tiene dato entonces se lo pregunta al servidor
                     if (answer == null) {
                         System.out.println("Servidor> Consultando a servidor de horoscopo...");
                         answer = askServer(query, HOROSCOPO_PORT);
-                        cacheHoroscopo.put(query, answer);
+                        if (answer.equals("ERROR")) {
+                            answer = "El servidor de horoscopo no esta disponible, consulte mas tarde.";
+                        } else {
+                            cacheHoroscope.put(query, answer);
+                        }
                     } else {
-                        System.out.println("cache hit.");
+                        System.out.println("Servidor> Cache hit.");
                     }
+                } else if (query.equals("salir")) {
+                    answer = "Hasta luego.";
                 } else {
                     answer = "Consulta no valida.";
                 }
 
-                System.out.println("Servidor> Respuesta: " + answer);
+                System.out.println("Servidor> Respuesta Cliente[" + idSession + "]: " + answer);
 
                 //envia la respuesta segun lo consultado
                 outBuffer.writeUTF(answer);
@@ -117,6 +127,7 @@ public class ServidorCentralHilo extends Thread {
             querySocket.close();
         } catch (IOException ex) {
             System.err.println("Servidor> " + ex.getMessage());
+            answer = "ERROR";
         } finally {
             return answer;
         }
