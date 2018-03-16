@@ -1,4 +1,4 @@
-package laboratoriodistribuido;
+package laboratoriodistribuido.ejemplo1;
 
 import java.io.*;
 import java.net.*;

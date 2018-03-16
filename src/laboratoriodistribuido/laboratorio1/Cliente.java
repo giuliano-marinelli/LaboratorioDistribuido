@@ -1,4 +1,4 @@
-package laboratoriodistribuido;
+package laboratoriodistribuido.laboratorio1;
 
 import java.io.*;
 import java.net.*;
@@ -6,6 +6,7 @@ import java.net.*;
 public class Cliente {
 
     public static void main(String[] args) throws IOException {
+        //direccion del servidor a conectar
         String serverAddress = "localhost";
 
         //creo el socket del cliente
