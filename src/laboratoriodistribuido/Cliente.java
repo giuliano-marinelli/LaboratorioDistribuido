@@ -1,45 +1,56 @@
 package laboratoriodistribuido;
 
 import java.io.*;
-import java.net.Socket;
-import java.util.*;
-import java.util.logging.*;
-class Persona extends Thread {
-    protected Socket sk;
-    protected DataOutputStream dos;
-    protected DataInputStream dis;
-    private int id;
-    public Persona(int id) {
-        this.id = id;
-    }
-    @Override
-    public void run() {
-        try {
-            sk = new Socket("127.0.0.1", 10578);
-            dos = new DataOutputStream(sk.getOutputStream());
-            dis = new DataInputStream(sk.getInputStream());
-            System.out.println(id + " envía saludo");
-            dos.writeUTF("hola");
-            String respuesta="";
-            respuesta = dis.readUTF();
-            System.out.println(id + " Servidor devuelve saludo: " + respuesta);
-            dis.close();
-            dos.close();
-            sk.close();
-        } catch (IOException ex) {
-            Logger.getLogger(Persona.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-}
-public class Cliente {
-    public static void main(String[] args) {
-        ArrayList<Thread> clients = new ArrayList<Thread>();
-        for (int i = 0; i < 5; i++) {
-            clients.add(new Persona(i));
-        }
-        for (Thread thread : clients) {
-            thread.start();
-        }
-    }
-}
+import java.net.*;
 
+public class Cliente {
+
+    public static void main(String[] args) throws IOException {
+        String serverAddress = "localhost";
+
+        //creo el socket del cliente
+        Socket clientSocket = null;
+        try {
+            clientSocket = new Socket(serverAddress, 20000);
+        } catch (UnknownHostException e) {
+            System.err.println("No se encuentra el servidor.");
+            System.exit(1);
+        } catch (IOException e) {
+            System.err.println("No se puede conectar a " + serverAddress + ".");
+            System.exit(1);
+        }
+        System.out.println("Cliente se conecto con " + serverAddress + " exitosamente.");
+
+        //crea un buffer de escritura o de salida (out): para enviar al servidor
+        PrintWriter out = new PrintWriter(
+                clientSocket.getOutputStream(), true);
+
+        //crea un buffer de lectura o de entrada (in): para recibir del servidor
+        BufferedReader in = new BufferedReader(new InputStreamReader(
+                clientSocket.getInputStream()));
+
+        //crea un buffer para leer la entrada por consola
+        BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
+
+        //variable para guardar lo escritor por consola
+        String userInput = "";
+
+        while (!userInput.equals("adios")) {
+            System.out.print("Escriba un mensaje: ");
+            //readLine: bloquea hasta que recibe un mensaje por consola
+            userInput = stdIn.readLine();
+            //envia el mensaje al servidor
+            out.println(userInput);
+            //readLine: bloquea hasta que recibe una respuesta del servidor
+            System.out.println(in.readLine());
+        }
+
+        //cierra los buffer de comunicacion con el servidor y de entrada por consola
+        out.close();
+        in.close();
+        stdIn.close();
+        
+        //cierra el socket del cliente
+        clientSocket.close();
+    }
+}
