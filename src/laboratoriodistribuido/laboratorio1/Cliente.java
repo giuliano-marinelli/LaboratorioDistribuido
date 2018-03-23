@@ -28,6 +28,8 @@ public class Cliente {
             String query = "", answer = "";
 
             while (!query.equals("salir")) {
+                System.out.println("Cliente> Formato de consulta (fecha,signo). ");
+                System.out.println("Cliente> Formato de fecha: dd/mm/aaaa. ");
                 System.out.print("Cliente> Escriba consulta: ");
 
                 //captura consulta escrita por consola
@@ -40,6 +42,7 @@ public class Cliente {
                 answer = inBuffer.readUTF();
 
                 System.out.println("Servidor> Respuesta: " + answer);
+                System.out.println("");
             }
 
             //cierra el socket con el servidor

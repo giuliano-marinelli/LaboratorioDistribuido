@@ -50,47 +50,65 @@ public class ServidorCentralHilo extends Thread {
         try {
             String query = "";
             String answer = "";
+            String answerW = "";
+            String answerH = "";
+
             while (!query.equals("salir")) {
                 //bloquea hasta recibir una consulta
                 query = inBuffer.readUTF();
 
                 System.out.println("Cliente[" + idSession + "]> Consulta: " + query);
 
+                /*extraer fecha y horoscopo de query*/
+                String date = query.split(",")[0].substring(1);
+                String hAux = query.split(",")[1];
+                String sign = hAux.substring(0, hAux.length() - 1);
+                boolean isValidDate = isValidDate(date);
+                boolean isValidSign = isValidSign(sign);
+                
                 //chequea si es un dato valido para consultar el clima o el horoscopo
-                if (isValidDate(query)) {
+                if (isValidDate) {
                     //busca la consulta en la cache.
-                    answer = cacheWeather.get(query);
+                    answerW = cacheWeather.get(date);
                     //si no tiene dato entonces se lo pregunta al servidor
-                    if (answer == null) {
+                    if (answerW == null) {
                         System.out.println("Servidor> Consultando a servidor de clima...");
-                        answer = askServer(query, CLIMA_PORT);
-                        if (answer.equals("ERROR")) {
-                            answer = "El servidor de clima no esta disponible, consulte mas tarde.";
+                        answerW = askServer(date, CLIMA_PORT);
+                        if (answerW.equals("ERROR")) {
+                            answerW = "El servidor de clima no esta disponible, consulte mas tarde.";
                         } else {
-                            cacheWeather.put(query, answer);
+                            cacheWeather.put(date, answerW);
                         }
                     } else {
                         System.out.println("Servidor> Cache hit.");
                     }
-                } else if (isValidSign(query)) {
+                } else {
+                    answerW = "Fecha no válida";
+                }
+
+                if (isValidSign) {
                     //busca la consulta en la cache.
-                    answer = cacheHoroscope.get(query);
+                    answerH = cacheHoroscope.get(sign);
                     //si no tiene dato entonces se lo pregunta al servidor
-                    if (answer == null) {
+                    if (answerH == null) {
                         System.out.println("Servidor> Consultando a servidor de horoscopo...");
-                        answer = askServer(query, HOROSCOPO_PORT);
-                        if (answer.equals("ERROR")) {
-                            answer = "El servidor de horoscopo no esta disponible, consulte mas tarde.";
+                        answerH = askServer(sign, HOROSCOPO_PORT);
+                        if (answerH.equals("ERROR")) {
+                            answerH = "El servidor de horoscopo no esta disponible, consulte mas tarde.";
                         } else {
-                            cacheHoroscope.put(query, answer);
+                            cacheHoroscope.put(sign, answerH);
                         }
                     } else {
                         System.out.println("Servidor> Cache hit.");
                     }
-                } else if (query.equals("salir")) {
+                } else {
+                    answerH = "Signo no válido";
+                }
+
+                if (query.equals("salir")) {
                     answer = "Hasta luego.";
                 } else {
-                    answer = "Consulta no valida.";
+                    answer = "Horóscopo: " + answerH + " \n Clima: " + answerW;
                 }
 
                 System.out.println("Servidor> Respuesta Cliente[" + idSession + "]: " + answer);
