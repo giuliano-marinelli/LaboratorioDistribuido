@@ -7,7 +7,6 @@ public class Cliente {
 
     private final static int CENTRAL_PORT = 10000;
     private final static String SERVER = "localhost";
-    private int AAAAA;
 
     public static void main(String[] args) throws IOException {
         try {
