@@ -1,16 +1,20 @@
 package laboratoriodistribuido.laboratorio1;
 
+/**
+ * Recibir parámetro: [CENTRAL_PORT]
+ */
 import java.io.*;
 import java.net.*;
 import java.util.HashMap;
 
 public class ServidorCentral {
 
-    private final static int CENTRAL_PORT = 10000;
+    private static int CENTRAL_PORT;
     private static HashMap<String, String> cacheWeather;
     private static HashMap<String, String> cacheHoroscope;
 
     public static void main(String args[]) throws IOException, InterruptedException {
+        CENTRAL_PORT = Integer.parseInt(args[0]);
         ServerSocket serverSocket;
         System.out.print("Servidor> Iniciando... ");
         try {

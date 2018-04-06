@@ -1,13 +1,17 @@
 package laboratoriodistribuido.laboratorio1;
 
+/**
+ * Recibir parámetro: [PORT]
+ */
 import java.io.*;
 import java.net.*;
 
 public class ServidorClima {
 
-    private final static int PORT = 10002;
+    private static int PORT;
 
     public static void main(String args[]) throws IOException {
+        PORT = Integer.parseInt(args[0]);
         ServerSocket serverSocket;
         System.out.print("Servidor Clima> Iniciando... ");
         try {

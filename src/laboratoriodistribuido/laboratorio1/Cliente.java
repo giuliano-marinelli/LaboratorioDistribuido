@@ -1,14 +1,20 @@
 package laboratoriodistribuido.laboratorio1;
 
+/**
+ * Recibir parametros en el siguiente orden: [Server, Central_port].
+ */
+
 import java.io.*;
 import java.net.*;
 
 public class Cliente {
 
-    private final static int CENTRAL_PORT = 10000;
-    private final static String SERVER = "localhost";
+    private static int CENTRAL_PORT;
+    private static String SERVER;
 
     public static void main(String[] args) throws IOException {
+        SERVER = args[0];
+        CENTRAL_PORT = Integer.parseInt(args[1]);
         try {
             System.out.print("Cliente> Iniciando...");
             //crea el socket para comunicar con el servidor
