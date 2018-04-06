@@ -1,7 +1,7 @@
 package laboratoriodistribuido.laboratorio1;
 
 /**
- * Recibir parámetro: [CENTRAL_PORT]
+ * Recibir parámetro: [CENTRAL_PORT, portClima, portHoroscopo, ipServer]
  */
 import java.io.*;
 import java.net.*;
@@ -15,8 +15,16 @@ public class ServidorCentral {
 
     public static void main(String args[]) throws IOException, InterruptedException {
         CENTRAL_PORT = Integer.parseInt(args[0]);
+        int portClima;
+        int portHoros;
+        String ipServer;
+        portClima = Integer.parseInt(args[1]);
+        portHoros = Integer.parseInt(args[2]);
+        ipServer = args[3];
         ServerSocket serverSocket;
-        System.out.print("Servidor> Iniciando... ");
+
+        System.out.print(
+                "Servidor> Iniciando... ");
         try {
             //inicializar las caches
             cacheWeather = new HashMap<>();
@@ -32,7 +40,8 @@ public class ServidorCentral {
                 clientSocket = serverSocket.accept();
                 System.out.println("Servidor> Nueva conexión entrante: " + clientSocket);
                 //lanza un hilo para atender al cliente
-                ((ServidorCentralHilo) new ServidorCentralHilo(clientSocket, idSession, cacheWeather, cacheHoroscope)).start();
+                ((ServidorCentralHilo) new ServidorCentralHilo(clientSocket, idSession,
+                        cacheWeather, cacheHoroscope, portHoros, portClima, ipServer)).start();
                 idSession++;
             }
         } catch (IOException ex) {

@@ -8,9 +8,9 @@ import java.util.HashMap;
 
 public class ServidorCentralHilo extends Thread {
 
-    private final static int HOROSCOPO_PORT = 10001;
-    private final static int CLIMA_PORT = 10002;
-    private final static String SERVER = "localhost";
+    private static int HOROSCOPO_PORT;
+    private static int CLIMA_PORT;
+    private static String SERVER;
 
     private Socket clientSocket;
     private DataInputStream inBuffer;
@@ -21,11 +21,15 @@ public class ServidorCentralHilo extends Thread {
     private HashMap<String, String> cacheHoroscope;
 
     public ServidorCentralHilo(Socket clientSocket, int idSession,
-            HashMap<String, String> cacheWeather, HashMap<String, String> cacheHoroscope) {
+            HashMap<String, String> cacheWeather, HashMap<String, String> cacheHoroscope,
+            int portHoros, int portClima, String ipServer) {
         this.clientSocket = clientSocket;
         this.idSession = idSession;
         this.cacheWeather = cacheWeather;
         this.cacheHoroscope = cacheHoroscope;
+        HOROSCOPO_PORT = portHoros;
+        CLIMA_PORT = portClima;
+        SERVER = ipServer;
         //inicializa los buffers para comunicarse con el cliente
         try {
             inBuffer = new DataInputStream(clientSocket.getInputStream());
@@ -65,7 +69,7 @@ public class ServidorCentralHilo extends Thread {
                 String sign = hAux.substring(0, hAux.length() - 1);
                 boolean isValidDate = isValidDate(date);
                 boolean isValidSign = isValidSign(sign);
-                
+
                 //chequea si es un dato valido para consultar el clima o el horoscopo
                 if (isValidDate) {
                     //busca la consulta en la cache.
