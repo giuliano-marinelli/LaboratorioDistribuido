@@ -1,4 +1,4 @@
-package laboratoriodistribuido.laboratorio1;
+package servidorcentral;
 
 /**
  * Recibir parámetro: [CENTRAL_PORT, portClima, portHoroscopo, ipServer]

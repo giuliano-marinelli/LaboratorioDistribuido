@@ -1,4 +1,4 @@
-package laboratoriodistribuido.laboratorio1;
+package cliente;
 
 /**
  * Recibir parametros en el siguiente orden: [Server, Central_port].

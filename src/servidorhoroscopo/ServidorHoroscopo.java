@@ -1,4 +1,4 @@
-package laboratoriodistribuido.laboratorio1;
+package servidorhoroscopo;
 
 /**
  * Recibir parámetro: [PORT]

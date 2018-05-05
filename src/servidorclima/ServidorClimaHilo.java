@@ -1,4 +1,4 @@
-package laboratoriodistribuido.laboratorio1;
+package servidorclima;
 
 import java.io.*;
 import java.net.*;

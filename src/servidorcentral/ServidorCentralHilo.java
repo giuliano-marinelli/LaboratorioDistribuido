@@ -1,4 +1,4 @@
-package laboratoriodistribuido.laboratorio1;
+package servidorcentral;
 
 import java.io.*;
 import java.net.*;
